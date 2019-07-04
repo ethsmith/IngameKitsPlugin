@@ -1,0 +1,9 @@
+name: IngameKits
+authors: [TekkitCommando]
+version: 1.0.0
+
+main: me.tekkitcommando.ingamekits.IngameKits
+
+commands:
+  kit:
+    usage: /kit <subcommand>
