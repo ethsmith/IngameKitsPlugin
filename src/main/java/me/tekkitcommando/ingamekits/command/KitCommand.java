@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -42,6 +43,25 @@ public class KitCommand implements CommandExecutor {
                                 if (plugin.getKits().contains("kits." + subcommand + ".items." + mat.toString())) {
                                     int amount = plugin.getKits().getInt("kits." + subcommand + ".items." + mat.toString() + ".amount");
                                     ItemStack item = new ItemStack(mat, amount);
+                                    ItemMeta meta = item.getItemMeta();
+
+                                    if (plugin.getKits().contains("kits." + subcommand + ".items." + mat.toString() + ".name")) {
+                                        Objects.requireNonNull(meta).setDisplayName(ChatColor.translateAlternateColorCodes('&', plugin.getKits().getString("kits." + subcommand + ".items." + mat.toString() + ".name")));
+                                    }
+
+                                    if (plugin.getKits().contains("kits." + subcommand + ".items." + mat.toString() + ".lore")) {
+                                        List<String> loreItems = plugin.getKits().getStringList("kits." + subcommand + ".items." + mat.toString() + ".lore");
+                                        List<String> newList = new ArrayList<>();
+
+                                        for (String loreItem : loreItems) {
+                                            loreItem = ChatColor.translateAlternateColorCodes('&', loreItem);
+                                            newList.add(loreItem);
+                                        }
+
+                                        Objects.requireNonNull(meta).setLore(newList);
+                                    }
+
+                                    item.setItemMeta(meta);
 
                                     if (item.getType().getId() > 297 && item.getType().getId() < 318 && plugin.getKits().getBoolean("kits." + subcommand + ".items." + mat.toString() + ".wearing")) {
                                         if (mat.toString().contains("HELMET")) {
@@ -64,18 +84,33 @@ public class KitCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.kitDoesntExist")));
                     }
-                }else if (args.length == 2) {
+                } else {
                     String subcommand = args[0];
                     String kitName = args[1];
+                    String usesOrTime;
 
                     if (subcommand.equalsIgnoreCase("create")) {
                         if (player.hasPermission("kits.create")) {
                             if (!(plugin.getKits().contains("kits." + kitName))) {
+                                if (args.length > 2) {
+                                    usesOrTime = args[2];
+                                    if (usesOrTime.startsWith("time:")) {
+                                        plugin.getKits().set("kits." + kitName + ".time", usesOrTime.split(":")[1]);
+                                    } else if (usesOrTime.startsWith("puses:")) {
+                                        plugin.getKits().set("kits." + kitName + ".puses", usesOrTime.split(":")[1]);
+                                    } else if (usesOrTime.startsWith("guses:")) {
+                                        plugin.getKits().set("kits." + kitName + ".guses", usesOrTime.split(":")[1]);
+                                    } else {
+                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.invalidUseRestriction")));
+                                    }
+                                }
+
                                 String itemName;
 
                                 for (ItemStack armor : player.getInventory().getArmorContents()) {
                                     if (armor != null) {
                                         itemName = armor.getType().toString();
+                                        saveCustomMeta(armor, kitName, itemName);
                                     } else {
                                         continue;
                                     }
@@ -87,6 +122,7 @@ public class KitCommand implements CommandExecutor {
                                 for (ItemStack item : player.getInventory().getContents()) {
                                     if (item != null) {
                                         itemName = item.getType().toString();
+                                        saveCustomMeta(item, kitName, itemName);
                                     } else {
                                         continue;
                                     }
@@ -110,8 +146,6 @@ public class KitCommand implements CommandExecutor {
                     } else {
                         sendHelpMessage(player);
                     }
-                } else {
-                    sendHelpMessage(player);
                 }
             }
         }
@@ -122,5 +156,34 @@ public class KitCommand implements CommandExecutor {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("help.message")));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("help.command.receive")));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("help.command.create")));
+    }
+
+    private void saveCustomMeta(ItemStack item, String kitName, String itemName) {
+        if (item.hasItemMeta()) {
+            if (item.getItemMeta().hasDisplayName()) {
+                String customName = item.getItemMeta().getDisplayName();
+                plugin.getKits().set("kits." + kitName + ".items." + itemName + ".name", customName.replace("§", "&"));
+            }
+
+            if (item.getItemMeta().hasLore()) {
+                List<String> lores = item.getItemMeta().getLore();
+                List<String> newList = new ArrayList<>();
+
+                for (String loreItem : lores) {
+                    loreItem = loreItem.replace("§", "&");
+                    newList.add(loreItem);
+                }
+
+                plugin.getKits().set("kits." + kitName + ".items." + itemName + ".lore", newList);
+            }
+        }
+    }
+
+    private boolean hasUsesLeft() {
+        return false;
+    }
+
+    private boolean isItemOnCooldown() {
+        return true;
     }
 }

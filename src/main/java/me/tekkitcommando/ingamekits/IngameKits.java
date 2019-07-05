@@ -33,6 +33,7 @@ public class IngameKits extends JavaPlugin {
         config.setDefault("messages.kitCreationNotAllowed", "&a[&bServer&a] &cOops. &bIt looks like you don't have permission to create kits.");
         config.setDefault("messages.kitAlreadyExists", "&a[&bServer&a] &cOops. &bThat kit already exists.");
         config.setDefault("messages.kitDoesntExist", "&a[&bServer&a] &cOops. &bThat kit doesn't exist.");
+        config.setDefault("messages.invalidUseRestriction", "&a[&bServer&a] &cOops. &bThat usage restriction doesn't exist! Contact the dev to add it!");
 
         config.setDefault("help.message", "&a[&bServer&a] &bThese are the current kit commands:");
         config.setDefault("help.command.receive", "&b/kit <name>: receive the kit you typed the name of.");
