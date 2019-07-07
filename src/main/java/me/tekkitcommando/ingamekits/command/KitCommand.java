@@ -236,12 +236,4 @@ public class KitCommand implements CommandExecutor {
             }
         }
     }
-
-    private boolean hasUsesLeft() {
-        return false;
-    }
-
-    private boolean isItemOnCooldown() {
-        return true;
-    }
 }

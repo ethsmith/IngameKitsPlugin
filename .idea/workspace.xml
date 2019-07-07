@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="696b5416-bda6-4e18-9ddc-d8db949bd5ad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/tekkitcommando/ingamekits/IngameKits.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/tekkitcommando/ingamekits/IngameKits.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/tekkitcommando/ingamekits/command/KitCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/tekkitcommando/ingamekits/command/KitCommand.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -57,12 +52,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/tekkitcommando/ingamekits/command/KitCommand.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="421">
-              <caret line="94" column="29" lean-forward="true" selection-start-line="94" selection-start-column="29" selection-end-line="94" selection-end-column="29" />
+            <state relative-caret-position="410">
+              <caret line="237" column="5" selection-start-line="237" selection-start-column="5" selection-end-line="237" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#14539#14540#0" expanded="true" />
-                <element signature="e#14608#14609#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -126,7 +119,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1562533586036" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1562533859089" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -161,12 +154,12 @@
       <workItem from="1562273694104" duration="623000" />
       <workItem from="1562284083229" duration="599000" />
       <workItem from="1562340987834" duration="4126000" />
-      <workItem from="1562520338376" duration="4064000" />
+      <workItem from="1562520338376" duration="4294000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21536000" />
+    <option name="totallyTimeSpent" value="21766000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -244,12 +237,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/tekkitcommando/ingamekits/command/KitCommand.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="421">
-          <caret line="94" column="29" lean-forward="true" selection-start-line="94" selection-start-column="29" selection-end-line="94" selection-end-column="29" />
+        <state relative-caret-position="410">
+          <caret line="237" column="5" selection-start-line="237" selection-start-column="5" selection-end-line="237" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#14539#14540#0" expanded="true" />
-            <element signature="e#14608#14609#0" expanded="true" />
           </folding>
         </state>
       </provider>
