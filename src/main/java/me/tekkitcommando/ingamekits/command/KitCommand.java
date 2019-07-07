@@ -73,24 +73,27 @@ public class KitCommand implements CommandExecutor {
                                 }
                             } else if (plugin.getKits().contains("kits." + subcommand + ".time")) {
                                 // Check time
-                                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-                                DateTime dateTimeNow = new DateTime();
-                                DateTime dateTimeFormatted = formatter.parseDateTime(dateTimeNow.toString());
+                                DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss");
+                                DateTime dateTimeNow = DateTime.now();
+
+                                String formattedTimeString = dateTimeNow.toString(formatter);
+
+                                DateTime formattedDateTime = formatter.parseDateTime(formattedTimeString);
 
                                 if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".time")) {
                                     String dateTimeUsedString = plugin.getRestrictions().getString("players." + player.getUniqueId().toString() + "." + subcommand + ".time");
                                     DateTime dateTimeUsed = formatter.parseDateTime(dateTimeUsedString);
 
-                                    if (Hours.hoursBetween(dateTimeUsed, dateTimeFormatted).getHours() < plugin.getKits().getInt("kits." + subcommand + ".time")) {
+                                    if (Hours.hoursBetween(dateTimeUsed, formattedDateTime).getHours() < plugin.getKits().getInt("kits." + subcommand + ".time")) {
                                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.stillOnCooldown")));
                                         return true;
                                     } else {
                                         // Record receive time
-                                        plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", dateTimeFormatted);
+                                        plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", formattedDateTime.toString(formatter));
                                     }
                                 } else {
                                     // Record receive time
-                                    plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", dateTimeFormatted);
+                                    plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", formattedDateTime.toString(formatter));
                                 }
                             }
 
