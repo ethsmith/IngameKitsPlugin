@@ -11,7 +11,8 @@ public class IngameKits extends JavaPlugin {
 
     private Logger logger;
     private Yaml config = new Yaml("config", getDataFolder().getAbsolutePath());
-    private Json kits = new Json("kits", getDataFolder().getAbsolutePath());
+    private Yaml kits = new Yaml("kits", getDataFolder().getAbsolutePath());
+    private Json restrictions = new Json("restrictions", getDataFolder().getAbsolutePath());
 
     @Override
     public void onDisable() {
@@ -34,6 +35,8 @@ public class IngameKits extends JavaPlugin {
         config.setDefault("messages.kitAlreadyExists", "&a[&bServer&a] &cOops. &bThat kit already exists.");
         config.setDefault("messages.kitDoesntExist", "&a[&bServer&a] &cOops. &bThat kit doesn't exist.");
         config.setDefault("messages.invalidUseRestriction", "&a[&bServer&a] &cOops. &bThat usage restriction doesn't exist! Contact the dev to add it!");
+        config.setDefault("messages.noUsesLeft", "&a[&bServer&a] &cOops. &bYou don't have any uses left.");
+        config.setDefault("messages.stillOnCooldown", "&a[&bServer&a] &cOops. &bThat kit is still on cooldown!");
 
         config.setDefault("help.message", "&a[&bServer&a] &bThese are the current kit commands:");
         config.setDefault("help.command.receive", "&b/kit <name>: receive the kit you typed the name of.");
@@ -54,7 +57,11 @@ public class IngameKits extends JavaPlugin {
         return config;
     }
 
-    public Json getKits() {
+    public Yaml getKits() {
         return kits;
+    }
+
+    public Json getRestrictions() {
+        return restrictions;
     }
 }

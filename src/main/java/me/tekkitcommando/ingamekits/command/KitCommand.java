@@ -10,6 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.*;
 
@@ -36,6 +40,60 @@ public class KitCommand implements CommandExecutor {
 
                     if (plugin.getKits().contains("kits." + subcommand)) {
                         if (player.hasPermission("kits." + subcommand)) {
+
+                            // Check if uses are up
+                            if (plugin.getKits().contains("kits." + subcommand + ".puses")) {
+                                if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".uses")) {
+                                    int uses = plugin.getKits().getInt("kits." + subcommand + ".puses");
+                                    int usesUsed = plugin.getRestrictions().getInt("players." + player.getUniqueId().toString() + "." + subcommand + ".uses");
+
+                                    if (usesUsed >= uses) {
+                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.noUsesLeft")));
+                                        return true;
+                                    } else {
+                                        plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".uses", usesUsed + 1);
+                                    }
+                                } else {
+                                    plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".uses", 1);
+                                }
+                            } else if (plugin.getKits().contains("kits." + subcommand + ".guses")) {
+                                // Check global uses
+                                if (plugin.getRestrictions().contains("kits." + subcommand + ".uses")) {
+                                    int uses = plugin.getKits().getInt("kits." + subcommand + ".guses");
+                                    int usedUses = plugin.getRestrictions().getInt("kits." + subcommand + ".uses");
+
+                                    if (usedUses >= uses) {
+                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.noUsesLeft")));
+                                        return true;
+                                    } else {
+                                        plugin.getRestrictions().set("kits." + subcommand + ".uses", usedUses + 1);
+                                    }
+                                } else {
+                                    plugin.getRestrictions().set("kits." + subcommand + ".uses", 1);
+                                }
+                            } else if (plugin.getKits().contains("kits." + subcommand + ".time")) {
+                                // Check time
+                                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+                                DateTime dateTimeNow = new DateTime();
+                                DateTime dateTimeFormatted = formatter.parseDateTime(dateTimeNow.toString());
+
+                                if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".time")) {
+                                    String dateTimeUsedString = plugin.getRestrictions().getString("players." + player.getUniqueId().toString() + "." + subcommand + ".time");
+                                    DateTime dateTimeUsed = formatter.parseDateTime(dateTimeUsedString);
+
+                                    if (Hours.hoursBetween(dateTimeUsed, dateTimeFormatted).getHours() < plugin.getKits().getInt("kits." + subcommand + ".time")) {
+                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.stillOnCooldown")));
+                                        return true;
+                                    } else {
+                                        // Record receive time
+                                        plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", dateTimeFormatted);
+                                    }
+                                } else {
+                                    // Record receive time
+                                    plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", dateTimeFormatted);
+                                }
+                            }
+
                             // Give kit to player
                             Inventory inv = player.getInventory();
 
