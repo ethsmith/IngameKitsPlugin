@@ -3,12 +3,15 @@ package me.tekkitcommando.ingamekits.command;
 import me.tekkitcommando.ingamekits.IngameKits;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
@@ -40,60 +43,61 @@ public class KitCommand implements CommandExecutor {
 
                     if (plugin.getKits().contains("kits." + subcommand)) {
                         if (player.hasPermission("kits." + subcommand)) {
+                            if (!player.hasPermission("kits.restrictions.bypass")) {
+                                // Check if uses are up
+                                if (plugin.getKits().contains("kits." + subcommand + ".puses")) {
+                                    if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".uses")) {
+                                        int uses = plugin.getKits().getInt("kits." + subcommand + ".puses");
+                                        int usesUsed = plugin.getRestrictions().getInt("players." + player.getUniqueId().toString() + "." + subcommand + ".uses");
 
-                            // Check if uses are up
-                            if (plugin.getKits().contains("kits." + subcommand + ".puses")) {
-                                if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".uses")) {
-                                    int uses = plugin.getKits().getInt("kits." + subcommand + ".puses");
-                                    int usesUsed = plugin.getRestrictions().getInt("players." + player.getUniqueId().toString() + "." + subcommand + ".uses");
-
-                                    if (usesUsed >= uses) {
-                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.noUsesLeft")));
-                                        return true;
+                                        if (usesUsed >= uses) {
+                                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.noUsesLeft")));
+                                            return true;
+                                        } else {
+                                            plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".uses", usesUsed + 1);
+                                        }
                                     } else {
-                                        plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".uses", usesUsed + 1);
+                                        plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".uses", 1);
                                     }
-                                } else {
-                                    plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".uses", 1);
-                                }
-                            } else if (plugin.getKits().contains("kits." + subcommand + ".guses")) {
-                                // Check global uses
-                                if (plugin.getRestrictions().contains("kits." + subcommand + ".uses")) {
-                                    int uses = plugin.getKits().getInt("kits." + subcommand + ".guses");
-                                    int usedUses = plugin.getRestrictions().getInt("kits." + subcommand + ".uses");
+                                } else if (plugin.getKits().contains("kits." + subcommand + ".guses")) {
+                                    // Check global uses
+                                    if (plugin.getRestrictions().contains("kits." + subcommand + ".uses")) {
+                                        int uses = plugin.getKits().getInt("kits." + subcommand + ".guses");
+                                        int usedUses = plugin.getRestrictions().getInt("kits." + subcommand + ".uses");
 
-                                    if (usedUses >= uses) {
-                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.noUsesLeft")));
-                                        return true;
+                                        if (usedUses >= uses) {
+                                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.noUsesLeft")));
+                                            return true;
+                                        } else {
+                                            plugin.getRestrictions().set("kits." + subcommand + ".uses", usedUses + 1);
+                                        }
                                     } else {
-                                        plugin.getRestrictions().set("kits." + subcommand + ".uses", usedUses + 1);
+                                        plugin.getRestrictions().set("kits." + subcommand + ".uses", 1);
                                     }
-                                } else {
-                                    plugin.getRestrictions().set("kits." + subcommand + ".uses", 1);
-                                }
-                            } else if (plugin.getKits().contains("kits." + subcommand + ".time")) {
-                                // Check time
-                                DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss");
-                                DateTime dateTimeNow = DateTime.now();
+                                } else if (plugin.getKits().contains("kits." + subcommand + ".time")) {
+                                    // Check time
+                                    DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss");
+                                    DateTime dateTimeNow = DateTime.now();
 
-                                String formattedTimeString = dateTimeNow.toString(formatter);
+                                    String formattedTimeString = dateTimeNow.toString(formatter);
 
-                                DateTime formattedDateTime = formatter.parseDateTime(formattedTimeString);
+                                    DateTime formattedDateTime = formatter.parseDateTime(formattedTimeString);
 
-                                if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".time")) {
-                                    String dateTimeUsedString = plugin.getRestrictions().getString("players." + player.getUniqueId().toString() + "." + subcommand + ".time");
-                                    DateTime dateTimeUsed = formatter.parseDateTime(dateTimeUsedString);
+                                    if (plugin.getRestrictions().contains("players." + player.getUniqueId().toString() + "." + subcommand + ".time")) {
+                                        String dateTimeUsedString = plugin.getRestrictions().getString("players." + player.getUniqueId().toString() + "." + subcommand + ".time");
+                                        DateTime dateTimeUsed = formatter.parseDateTime(dateTimeUsedString);
 
-                                    if (Hours.hoursBetween(dateTimeUsed, formattedDateTime).getHours() < plugin.getKits().getInt("kits." + subcommand + ".time")) {
-                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.stillOnCooldown")));
-                                        return true;
+                                        if (Hours.hoursBetween(dateTimeUsed, formattedDateTime).getHours() < plugin.getKits().getInt("kits." + subcommand + ".time")) {
+                                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.stillOnCooldown")));
+                                            return true;
+                                        } else {
+                                            // Record receive time
+                                            plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", formattedDateTime.toString(formatter));
+                                        }
                                     } else {
                                         // Record receive time
                                         plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", formattedDateTime.toString(formatter));
                                     }
-                                } else {
-                                    // Record receive time
-                                    plugin.getRestrictions().set("players." + player.getUniqueId().toString() + "." + subcommand + ".time", formattedDateTime.toString(formatter));
                                 }
                             }
 
@@ -124,6 +128,12 @@ public class KitCommand implements CommandExecutor {
 
                                     item.setItemMeta(meta);
 
+                                    for (Enchantment enchantment : Enchantment.values()) {
+                                        if (plugin.getKits().contains("kits." + subcommand + ".items." + mat.toString() + ".enchantments." + enchantment.getKey().getKey())) {
+                                            item.addEnchantment(enchantment, plugin.getKits().getInt("kits." + subcommand + ".items." + mat.toString() + ".enchantments." + enchantment.getKey().getKey()));
+                                        }
+                                    }
+
                                     if (item.getType().getId() > 297 && item.getType().getId() < 318 && plugin.getKits().getBoolean("kits." + subcommand + ".items." + mat.toString() + ".wearing")) {
                                         if (mat.toString().contains("HELMET")) {
                                             player.getInventory().setHelmet(item);
@@ -153,6 +163,7 @@ public class KitCommand implements CommandExecutor {
                     if (subcommand.equalsIgnoreCase("create")) {
                         if (player.hasPermission("kits.create")) {
                             if (!(plugin.getKits().contains("kits." + kitName))) {
+                                // Save Kit Restrictions
                                 if (args.length > 2) {
                                     usesOrTime = args[2];
                                     if (usesOrTime.startsWith("time:")) {
@@ -172,6 +183,7 @@ public class KitCommand implements CommandExecutor {
                                     if (armor != null) {
                                         itemName = armor.getType().toString();
                                         saveCustomMeta(armor, kitName, itemName);
+                                        saveItemEnchantments(armor, kitName, itemName);
                                     } else {
                                         continue;
                                     }
@@ -184,6 +196,7 @@ public class KitCommand implements CommandExecutor {
                                     if (item != null) {
                                         itemName = item.getType().toString();
                                         saveCustomMeta(item, kitName, itemName);
+                                        saveItemEnchantments(item, kitName, itemName);
                                     } else {
                                         continue;
                                     }
@@ -237,6 +250,13 @@ public class KitCommand implements CommandExecutor {
 
                 plugin.getKits().set("kits." + kitName + ".items." + itemName + ".lore", newList);
             }
+        }
+    }
+
+    private void saveItemEnchantments(ItemStack item, String kitName, String itemName) {
+        for (Enchantment enchantment : item.getEnchantments().keySet()) {
+            String enchantmentName = enchantment.getKey().getKey();
+            plugin.getKits().set("kits." + kitName + ".items." + itemName + ".enchantments." + enchantmentName, item.getEnchantments().get(enchantment));
         }
     }
 }
