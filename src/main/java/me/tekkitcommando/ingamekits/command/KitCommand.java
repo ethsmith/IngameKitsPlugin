@@ -19,6 +19,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class KitCommand implements CommandExecutor {
 
@@ -216,6 +217,17 @@ public class KitCommand implements CommandExecutor {
                             }
                         } else {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.kitCreationNotAllowed")));
+                        }
+                    } else if (subcommand.equalsIgnoreCase("remove")) {
+                        if (player.hasPermission("kits.remove")) {
+                            if (plugin.getKits().contains("kits." + kitName)) {
+                                plugin.getKits().remove("kits." + kitName);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.kitRemoved").replace("%kit%", kitName)));
+                            } else {
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.kitDoesntExist")));
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getPluginConfig().getString("messages.kitRemovalNotAllowed")));
                         }
                     } else {
                         sendHelpMessage(player);
